@@ -1,0 +1,8 @@
+{
+  "appId": "com.mingli.paipan",
+  "appName": "命理排盘",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true
+  }
+}

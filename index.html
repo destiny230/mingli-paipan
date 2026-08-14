@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>命理排盘 · 八字紫微奇门</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:#1a1a2e; color:#eee; min-height:100vh; }
+header { background:linear-gradient(135deg,#16213e,#0f3460); padding:18px 16px; text-align:center; }
+header h1 { font-size:20px; color:#e8c56a; letter-spacing:2px; }
+header p { font-size:12px; color:#8a93a6; margin-top:4px; }
+main { padding:16px; max-width:480px; margin:0 auto; }
+.card { background:#222244; border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+.card h2 { font-size:15px; color:#e8c56a; margin-bottom:12px; border-left:3px solid #e8c56a; padding-left:8px; }
+label { display:block; font-size:13px; color:#aab; margin:10px 0 4px; }
+input, select { width:100%; padding:10px; border-radius:8px; border:1px solid #334; background:#1a1a3a; color:#eee; font-size:15px; }
+.row { display:flex; gap:10px; }
+.row > div { flex:1; }
+.btn { width:100%; padding:13px; margin-top:14px; border:none; border-radius:10px; font-size:16px; font-weight:bold;
+  background:linear-gradient(135deg,#e8c56a,#d4a63f); color:#1a1a2e; cursor:pointer; }
+.btn:active { transform:scale(.98); }
+.tabs { display:flex; gap:6px; margin-bottom:12px; }
+.tab { flex:1; padding:8px; text-align:center; border-radius:8px; font-size:13px; background:#2a2a4a; color:#aab; cursor:pointer; }
+.tab.active { background:#e8c56a; color:#1a1a2e; font-weight:bold; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+/* 八字四柱 */
+.pillars { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; text-align:center; }
+.pillar { background:#1a1a3a; border-radius:8px; padding:10px 4px; }
+.pillar .ganzhi { font-size:16px; font-weight:bold; color:#fff; }
+.pillar .shishen { font-size:11px; color:#e8c56a; margin-top:4px; }
+.pillar .nayin { font-size:10px; color:#889; margin-top:2px; }
+.pillar .hide { font-size:10px; color:#7a8; margin-top:2px; }
+/* 大运 */
+.dayun { display:flex; gap:6px; overflow-x:auto; padding:4px 0; }
+.dayun-item { min-width:64px; background:#1a1a3a; border-radius:8px; padding:8px 4px; text-align:center; }
+.dayun-item .age { font-size:10px; color:#889; }
+.dayun-item .gz { font-size:14px; color:#e8c56a; font-weight:bold; margin-top:2px; }
+/* 紫微 12 宫 */
+.ziwei-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.palace { background:#1a1a3a; border-radius:8px; padding:8px 4px; text-align:center; min-height:84px; }
+.palace.ming { border:2px solid #e8c56a; }
+.palace .pname { font-size:11px; color:#e8c56a; font-weight:bold; }
+.palace .pgz { font-size:10px; color:#889; margin-top:2px; }
+.palace .stars { font-size:12px; color:#fff; margin-top:4px; line-height:1.4; }
+.palace .misc { font-size:10px; color:#7a8; margin-top:2px; }
+/* 奇门 */
+.qm-info { font-size:14px; line-height:2; }
+.qm-info b { color:#e8c56a; }
+.qm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px; }
+.qm-cell { background:#1a1a3a; border-radius:8px; padding:8px 4px; text-align:center; min-height:72px; }
+.qm-cell .dir { font-size:11px; color:#e8c56a; }
+.qm-cell .val { font-size:12px; color:#fff; margin-top:3px; }
+/* 解读 */
+.reading { font-size:13px; line-height:1.8; color:#cdd; white-space:pre-wrap; }
+.meta { font-size:11px; color:#778; margin-top:8px; text-align:center; }
+.loading { text-align:center; color:#e8c56a; padding:20px; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🔮 命理排盘</h1>
+  <p>八字 · 紫微 · 奇门 三盘合一</p>
+</header>
+<main>
+  <div class="card">
+    <h2>输入出生信息</h2>
+    <label>出生日期</label>
+    <input type="date" id="birthDate" value="1992-01-15">
+    <label>出生时辰</label>
+    <select id="birthHour">
+      <option value="0">子时 23:00-01:00</option>
+      <option value="1">丑时 01:00-03:00</option>
+      <option value="2">寅时 03:00-05:00</option>
+      <option value="3">卯时 05:00-07:00</option>
+      <option value="4">辰时 07:00-09:00</option>
+      <option value="5">巳时 09:00-11:00</option>
+      <option value="6" selected>午时 11:00-13:00</option>
+      <option value="7">未时 13:00-15:00</option>
+      <option value="8">申时 15:00-17:00</option>
+      <option value="9">酉时 17:00-19:00</option>
+      <option value="10">戌时 19:00-21:00</option>
+      <option value="11">亥时 21:00-23:00</option>
+    </select>
+    <label>性别</label>
+    <select id="gender">
+      <option value="男" selected>男</option>
+      <option value="女">女</option>
+    </select>
+    <button class="btn" onclick="doPaipan()">开始排盘</button>
+  </div>
+
+  <div id="result" style="display:none">
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('bazi')">八字</div>
+        <div class="tab" onclick="switchTab('ziwei')">紫微</div>
+        <div class="tab" onclick="switchTab('qimen')">奇门</div>
+        <div class="tab" onclick="switchTab('reading')">解读</div>
+      </div>
+      <div id="tab-bazi" class="tab-content active"></div>
+      <div id="tab-ziwei" class="tab-content"></div>
+      <div id="tab-qimen" class="tab-content"></div>
+      <div id="tab-reading" class="tab-content"></div>
+    </div>
+    <p class="meta">排盘引擎：lunar-javascript · iztro · qimen-dunjia</p>
+  </div>
+</main>
+<script src="bundle.js"></script>
+<script>
+let currentData = null;
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function doPaipan() {
+  const d = document.getElementById('birthDate').value.split('-');
+  const hour = parseInt(document.getElementById('birthHour').value);
+  const gender = document.getElementById('gender').value;
+  const y = parseInt(d[0]), m = parseInt(d[1]), day = parseInt(d[2]);
+  
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('tab-bazi').innerHTML = '<div class="loading">排盘中...</div>';
+  
+  const bazi = window.Engine.paipanBazi(y, m, day, hour, 30);
+  const ziwei = window.Engine.paipanZiwei(y, m, day, hour, gender);
+  const now = new Date();
+  const qimen = window.Engine.paipanQimen(now.getFullYear(), now.getMonth()+1, now.getDate(), now.getHours());
+  
+  currentData = { bazi, ziwei, qimen, gender };
+  renderBazi(bazi);
+  renderZiwei(ziwei);
+  renderQimen(qimen);
+  renderReading();
+}
+
+function renderBazi(b) {
+  const p = b.pillars;
+  const html = `
+    <div class="pillars">
+      <div class="pillar"><div class="ganzhi">${p.year.gan}${p.year.zhi}</div><div class="shishen">${p.year.shishen}</div><div class="nayin">${p.year.nayin}</div><div class="hide">藏:${p.year.hide.join('')}</div></div>
+      <div class="pillar"><div class="ganzhi">${p.month.gan}${p.month.zhi}</div><div class="shishen">${p.month.shishen}</div><div class="nayin">${p.month.nayin}</div><div class="hide">藏:${p.month.hide.join('')}</div></div>
+      <div class="pillar" style="border:2px solid #e8c56a"><div class="ganzhi">${p.day.gan}${p.day.zhi}</div><div class="shishen">日主</div><div class="nayin">${p.day.nayin}</div><div class="hide">藏:${p.day.hide.join('')}</div></div>
+      <div class="pillar"><div class="ganzhi">${p.time.gan}${p.time.zhi}</div><div class="shishen">${p.time.shishen}</div><div class="nayin">${p.time.nayin}</div><div class="hide">藏:${p.time.hide.join('')}</div></div>
+    </div>
+    <p style="margin-top:10px;font-size:12px;color:#889">农历：${b.lunar} ｜ 命宫：${b.mingGong} ｜ 胎元：${b.taiYuan} ｜ 身宫：${b.shenGong}</p>
+    <h2 style="margin-top:14px">大运</h2>
+    <div class="dayun">
+      ${b.dayun.map(d => `<div class="dayun-item"><div class="age">${d.age}岁</div><div class="gz">${d.ganZhi}</div><div class="age">${d.startYear}-${d.endYear}</div></div>`).join('')}
+    </div>
+  `;
+  document.getElementById('tab-bazi').innerHTML = html;
+}
+
+function renderZiwei(z) {
+  if (z.error) { document.getElementById('tab-ziwei').innerHTML = '<div class="reading">紫微排盘出错：' + z.error + '</div>'; return; }
+  const html = `
+    <p style="font-size:12px;color:#889;margin-bottom:8px">${z.solarDate} ${z.lunarDate} ｜ ${z.fiveElementsClass} ｜ 命主${z.soul} 身主${z.body}</p>
+    <div class="ziwei-grid">
+      ${z.palaces.map(p => `
+        <div class="palace ${p.name==='命宫'?'ming':''}">
+          <div class="pname">${p.name}</div>
+          <div class="pgz">${p.ganZhi}</div>
+          <div class="stars">${p.majorStars.join('<br>') || '—'}</div>
+          <div class="misc">${p.minorStars.join(' ')}</div>
+        </div>`).join('')}
+    </div>
+  `;
+  document.getElementById('tab-ziwei').innerHTML = html;
+}
+
+function renderQimen(q) {
+  if (q.error) { document.getElementById('tab-qimen').innerHTML = '<div class="reading">奇门排盘出错：' + q.error + '</div>'; return; }
+  const html = `
+    <div class="qm-info">
+      四柱：<b>${q['年柱']} ${q['月柱']} ${q['日柱']} ${q['時柱']}</b><br>
+      局：<b>${q['陰陽']}${q['局數']}局</b> ｜ 值符：<b>${q['值符']}</b> ｜ 值使：<b>${q['值使']}</b><br>
+      值符落宫：<b>${q['值符落宮']}</b> ｜ 值使落宫：<b>${q['值使落宮']}</b> ｜ 旬首：<b>${q['旬首']}</b>
+    </div>
+    <div class="qm-grid">
+      ${(q['方位']||[]).map((dir, i) => `
+        <div class="qm-cell">
+          <div class="dir">${dir}</div>
+          <div class="val">${q['地盤'] ? q['地盤'][i] : ''}</div>
+          <div class="val">${q['九宮'] ? q['九宮'][i] : ''}</div>
+        </div>`).join('')}
+    </div>
+  `;
+  document.getElementById('tab-qimen').innerHTML = html;
+}
+
+function renderReading() {
+  const { bazi, ziwei, gender } = currentData;
+  const dayGan = bazi.pillars.day.gan;
+  const dayZhi = bazi.pillars.day.zhi;
+  const mingStars = ziwei.mingGong ? ziwei.mingGong.majorStars : [];
+  const lines = [];
+  lines.push(`【命主概况】`);
+  lines.push(`日主${dayGan}${dayZhi}（${bazi.pillars.day.nayin}），${gender}命。`);
+  lines.push(`紫微命宫：${mingStars.join('、') || '空宫'}，${ziwei.fiveElementsClass}。`);
+  lines.push(``);
+  lines.push(`【性格提示】`);
+  if (mingStars.includes('紫微')) lines.push('· 紫微坐命：领导气质，重面子，格局大。');
+  if (mingStars.includes('廉贞')) lines.push('· 廉贞入命：才艺灵动，性情较急，重情义。');
+  if (mingStars.includes('七杀')) lines.push('· 七杀坐命：果敢刚毅，行动力强，宜军警武职或开创型工作。');
+  if (mingStars.includes('天同')) lines.push('· 天同入命：温和圆融，福气深厚，宜协调型角色。');
+  if (mingStars.includes('太阳') || mingStars.includes('太阴')) lines.push('· 日月入命：外发光热内藏情，人缘佳，宜公众事务。');
+  if (mingStars.includes('武曲')) lines.push('· 武曲入命：刚毅务实，财星坐命，理财能力强。');
+  if (mingStars.includes('贪狼')) lines.push('· 贪狼入命：多才多艺，交际手腕强，重享受。');
+  if (mingStars.includes('巨门')) lines.push('· 巨门坐命：口才佳，善分析，宜以口为业（咨询/教学/法务）。');
+  if (mingStars.length === 0) lines.push('· 命宫空宫：借对宫星曜，性格受迁移宫影响大，晚发之象。');
+  lines.push(``);
+  lines.push(`【财官方向】`);
+  if (dayGan === '甲' || dayGan === '乙') lines.push('· 木日主：宜东方行业，文化教育/医药/绿色产业；忌金旺之地久居。');
+  if (dayGan === '丙' || dayGan === '丁') lines.push('· 火日主：宜南方行业，能源/传媒/电子/餐饮；忌水旺之地。');
+  if (dayGan === '戊' || dayGan === '己') lines.push('· 土日主：宜本地/房地产/仓储/农业；火土相生之地佳。');
+  if (dayGan === '庚' || dayGan === '辛') lines.push('· 金日主：宜西方行业，金融/机械/法律/军警；忌火旺之地。');
+  if (dayGan === '壬' || dayGan === '癸') lines.push('· 水日主：宜北方行业，贸易/物流/水产/智慧产业；忌土重之地。');
+  lines.push(``);
+  lines.push(`【2026 丙午年提示】`);
+  lines.push('· 丙午年火气极旺，火日主注意心脑血管与血压；水日主得火暖局反利事业。');
+  lines.push('· 流年五黄煞在正南，家中南方位忌动土、喧哗；宜静、宜净。');
+  lines.push(`（以上为学术参考，命理非科学定论，请理性看待）`);
+  document.getElementById('tab-reading').innerHTML = '<div class="reading">' + lines.join('\n') + '</div>';
+}
+</script>
+</body>
+</html>
