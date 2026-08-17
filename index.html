@@ -91,6 +91,16 @@ input, select { width:100%; padding:10px; border-radius:8px; border:1px solid #3
     <button class="btn" onclick="doPaipan()">开始排盘</button>
   </div>
 
+  <div id="donateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#222244;border-radius:16px;padding:24px;max-width:320px;width:100%;text-align:center">
+      <h2 style="color:#e8c56a;font-size:18px;margin-bottom:8px">❤️ 自愿捐赠</h2>
+      <p style="color:#aab;font-size:13px;margin-bottom:14px">如果本应用对您有帮助，欢迎自愿支持开发者 🙏</p>
+      <img src="reward-qr.jpg" style="width:220px;height:220px;border-radius:12px;margin-bottom:12px" alt="微信收款码">
+      <p style="color:#889;font-size:12px">微信扫码即可自愿捐赠 · 金额随意</p>
+      <button class="btn" style="margin-top:14px" onclick="document.getElementById('donateModal').style.display='none'">关闭</button>
+    </div>
+  </div>
+
   <div id="result" style="display:none">
     <div class="card">
       <div class="tabs">
@@ -104,6 +114,7 @@ input, select { width:100%; padding:10px; border-radius:8px; border:1px solid #3
       <div id="tab-qimen" class="tab-content"></div>
       <div id="tab-reading" class="tab-content"></div>
     </div>
+    <button class="btn" style="margin-top:10px;background:linear-gradient(135deg,#c0392b,#922b21)" onclick="document.getElementById('donateModal').style.display='flex'">❤️ 支持作者 · 自愿捐赠</button>
     <p class="meta">排盘引擎：lunar-javascript · iztro · qimen-dunjia</p>
   </div>
 </main>
