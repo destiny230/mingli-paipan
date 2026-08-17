@@ -32,8 +32,8 @@ jobs:
       - name: Bundle engine
         run: npx esbuild engine.js --bundle --format=iife --global-name=Engine --outfile=www/bundle.js
 
-      - name: Copy web assets
-        run: npx cap copy android
+      - name: Sync web assets
+        run: npx cap sync android
 
       - name: Fix gradlew permission
         run: chmod +x android/gradlew
